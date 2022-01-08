@@ -4,12 +4,13 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 
 @Entity
 @Table(name = "stock_value_date_pair")
-public class StockValueDatePair {
+public class StockValueDatePair implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -62,10 +63,9 @@ public class StockValueDatePair {
     @Override
     public String toString() {
         return "StockValueDatePair{" +
-                "id=" + id +
-                ", stock=" + stock +
-                ", value=" + value +
-                ", date=" + date +
+                "id=" + id.toString() +
+                ", value=" + value.toString() +
+                ", date=" + date.toString() +
                 '}';
     }
 

@@ -8,9 +8,9 @@ import java.util.List;
 @Component
 public interface StockService {
 
-    public List<Stock> findAll();
-    public Stock saveDummyStocks();
-    public Stock saveStock(Stock stock);
-    public Stock findByStockSymbol(String symbol);
+    List<Stock> findAll();
+    Stock saveDummyStocks();
+    Stock saveStock(Stock stock);
+    Stock findByStockSymbol(String symbol);
 
 }

@@ -11,8 +11,14 @@ import java.util.List;
 @Service
 public class StockServiceImpl implements StockService {
 
+    private final StockRepository stockRepository;
+
     @Autowired
-    StockRepository stockRepository;
+    public StockServiceImpl(StockRepository stockRepository) {
+        this.stockRepository = stockRepository;
+        // TODO: Remove dummy initialize
+        saveDummyStocks();
+    }
 
     @Override
     public List<Stock> findAll() {

@@ -3,12 +3,15 @@ package com.unibuc.finalproject.models.stock;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Table(name = "stocks")
-public class Stock {
+public class Stock  implements Serializable {
 
     @Id
     @Column(nullable = false, unique = true, length = 10)
@@ -27,6 +30,28 @@ public class Stock {
         if (o == null || getClass() != o.getClass()) return false;
         Stock stock = (Stock) o;
         return symbol.equals(stock.symbol) && name.equals(stock.name) && closingPrices.equals(stock.closingPrices);
+    }
+
+    public Double getCurrentPrice() {
+        if (closingPrices == null || closingPrices.size() < 1) {
+            return null;
+        }
+
+        Double result = null;
+        Date lastDate = null;
+        Iterator<StockValueDatePair> iterator = closingPrices.iterator();
+        while (iterator.hasNext()) {
+            StockValueDatePair stockValueDatePair = iterator.next();
+            Double currentPrice = stockValueDatePair.getValue();
+            Date currentDate = stockValueDatePair.getDate();
+
+            if (lastDate == null || currentDate.compareTo(lastDate) > 0) {
+                result = currentPrice;
+                lastDate = currentDate;
+            }
+        }
+
+        return result;
     }
 
     @Override

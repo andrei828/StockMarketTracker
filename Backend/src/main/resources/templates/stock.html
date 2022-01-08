@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>List Users</title>
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/css/bootstrap.min.css" />
+    <script type="text/javascript" src="/webjars/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+</head>
+<body>
+<div class="container text-center">
+    <div>
+        <form th:action="@{/logout}" method="post">
+            <p>
+                Welcome <b>[[${#request.userPrincipal.principal.fullName}]]</b>
+            </p>
+            <input type="submit" value="Sign Out" />
+        </form>
+    </div>
+    <div>
+        <h1 th:text="${stock.symbol}"></h1>
+        <div id="chart"></div>
+        <script th:inline="javascript"> 	// Enable Thymeleaf inlining
+            var closingPrices = [[${stock.closingPrices}]]; 	// Behaves just like in HTML
+            console.log(closingPrices);
+            var options = {
+                chart: {
+                    animations: {
+                        enabled: false
+                    },
+                    type: 'line'
+                },
+                series: [{
+                    name: 'sales',
+                    data: closingPrices.map(obj => obj.value)
+                }],
+                xaxis: {
+                    categories: closingPrices.map(obj => obj.date)
+                }
+            }
+
+            var chart = new ApexCharts(document.querySelector("#chart"), options);
+
+            chart.render();
+        </script>
+    </div>
+</div>
+</body>
+</html>

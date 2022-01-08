@@ -1,15 +1,26 @@
 package com.unibuc.finalproject.models.user;
 
+import com.unibuc.finalproject.models.analyzer.Analyzer;
+import com.unibuc.finalproject.models.portfolio.Portfolio;
+
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @OneToOne
+    private Portfolio portfolio;
+
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Set<Analyzer> analyzers;
 
     @Column(nullable = false, unique = true, length = 45)
     private String email;
@@ -23,25 +34,28 @@ public class User {
     @Column(name = "last_name", nullable = false, length = 20)
     private String lastName;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, email, password, firstName, lastName);
-    }
-
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Portfolio getPortfolio() {
+        return portfolio;
+    }
+
+    public void setPortfolio(Portfolio portfolio) {
+        this.portfolio = portfolio;
+    }
+
+    public Set<Analyzer> getAnalyzers() {
+        return analyzers;
+    }
+
+    public void setAnalyzers(Set<Analyzer> analyzers) {
+        this.analyzers = analyzers;
     }
 
     public String getEmail() {
@@ -74,5 +88,28 @@ public class User {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id) && Objects.equals(portfolio, user.portfolio) && Objects.equals(analyzers, user.analyzers) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, email, password, firstName, lastName);
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                '}';
     }
 }

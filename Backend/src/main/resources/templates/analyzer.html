@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>List Users</title>
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/css/bootstrap.min.css" />
+    <script type="text/javascript" src="/webjars/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.min.js"></script>
+</head>
+<body>
+<div class="container text-center">
+    <div>
+        <form th:action="@{/logout}" method="post">
+            <p>
+                Welcome <b>[[${#request.userPrincipal.principal.fullName}]]</b>
+            </p>
+            <input type="submit" value="Sign Out" />
+        </form>
+    </div>
+    <div>
+        <th:block th:each="stock: ${stocks}">
+            <a th:if="${#sets.contains(analyzer.getStocks(), stock)}" th:href="@{/analyzer/{id}/remove_stock/{symbol}(id=${analyzer.getId()}, symbol=${stock.getSymbol()})}" th:text="${stock.getSymbol()}" class="btn btn-danger"><i class="fas fa-user-edit ml-2"></i></a>
+            <a th:unless="${#sets.contains(analyzer.getStocks(), stock)}" th:href="@{/analyzer/{id}/add_stock/{symbol}(id=${analyzer.getId()}, symbol=${stock.getSymbol()})}" th:text="${stock.getSymbol()}" class="btn btn-success"><i class="fas fa-user-edit ml-2"></i></a>
+        </th:block>
+    </div>
+    <div>
+        <table class="table table-striped table-bordered">
+            <thead class="thead-dark">
+            <tr>
+                <th>Symbol</th>
+                <th>Name</th>
+                <th>Price</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="stock: ${analyzer.stocks}">
+                <td><a th:href="@{/stock/{id}(id=${stock.symbol})}" th:text="${stock.symbol}"></a></td>
+                <td th:text="${stock.name}">Name</td>
+                <td th:text="${stock.getCurrentPrice()}">Price</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="chart"></div>
+    <script th:inline="javascript">
+    var stocks = [[${analyzer.stocks}]];
+    var options = {
+        chart: {
+            animations: {
+                enabled: false
+            },
+            type: 'line'
+        },
+        series: stocks.map(stock => {
+            return {
+                name: stock.symbol,
+                data: stock.closingPrices.map(obj => obj.value)
+            }
+        }),
+        xaxis: {
+            categories: _.union(...stocks.map(obj => obj.closingPrices.map(closingPrice => closingPrice.date)))
+        }
+    }
+
+    var chart = new ApexCharts(document.querySelector("#chart"), options);
+
+    chart.render();
+    </script>
+</div>
+</body>
+</html>
