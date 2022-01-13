@@ -12,5 +12,5 @@ public interface AnalyzerRepository extends JpaRepository<Analyzer, Object> {
     Analyzer findAnalyzerById(Long id);
 
     @Transactional
-    void deleteById(Long id);
+    void deleteAnalyzerById(Long id);
 }

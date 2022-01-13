@@ -19,12 +19,16 @@
             <input type="submit" value="Sign Out" />
         </form>
     </div>
+    <br />
+    <br />
     <div>
         <th:block th:each="stock: ${stocks}">
             <a th:if="${#sets.contains(analyzer.getStocks(), stock)}" th:href="@{/analyzer/{id}/remove_stock/{symbol}(id=${analyzer.getId()}, symbol=${stock.getSymbol()})}" th:text="${stock.getSymbol()}" class="btn btn-danger"><i class="fas fa-user-edit ml-2"></i></a>
             <a th:unless="${#sets.contains(analyzer.getStocks(), stock)}" th:href="@{/analyzer/{id}/add_stock/{symbol}(id=${analyzer.getId()}, symbol=${stock.getSymbol()})}" th:text="${stock.getSymbol()}" class="btn btn-success"><i class="fas fa-user-edit ml-2"></i></a>
         </th:block>
     </div>
+    <br />
+    <br />
     <div>
         <table class="table table-striped table-bordered">
             <thead class="thead-dark">

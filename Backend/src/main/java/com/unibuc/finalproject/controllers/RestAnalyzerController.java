@@ -65,7 +65,8 @@ public class RestAnalyzerController {
 
     @PostMapping("/delete_analyzer/{id}")
     public AnalyzerResponse deleteAnalyzer(@PathVariable("id") String id) {
-        analyzerService.removeAnalyzerById(Long.parseLong(id));
+        Analyzer analyzer = analyzerService.findById(Long.parseLong(id));
+        analyzerService.delete(analyzer);
         return new AnalyzerResponse(200, "success");
     }
 

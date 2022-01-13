@@ -18,11 +18,13 @@
             <input type="submit" value="Sign Out" />
         </form>
     </div>
+    <br />
+    <br />
     <div>
         <h1 th:text="${stock.symbol}"></h1>
         <div id="chart"></div>
-        <script th:inline="javascript"> 	// Enable Thymeleaf inlining
-            var closingPrices = [[${stock.closingPrices}]]; 	// Behaves just like in HTML
+        <script th:inline="javascript">
+            var closingPrices = [[${stock.closingPrices}]];
             console.log(closingPrices);
             var options = {
                 chart: {

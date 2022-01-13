@@ -4,7 +4,6 @@ import com.unibuc.finalproject.models.stock.Stock;
 import com.unibuc.finalproject.models.user.User;
 import com.unibuc.finalproject.models.wishlist.Wishlist;
 import com.unibuc.finalproject.models.wishlist.WishlistRequest;
-import com.unibuc.finalproject.repositories.UserRepository;
 import com.unibuc.finalproject.models.wishlist.WishlistResponse;
 import com.unibuc.finalproject.services.stock.StockService;
 import com.unibuc.finalproject.services.user.UserService;

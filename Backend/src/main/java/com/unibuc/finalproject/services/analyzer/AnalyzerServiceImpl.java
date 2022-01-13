@@ -35,6 +35,11 @@ public class AnalyzerServiceImpl implements AnalyzerService {
 
     @Override
     public void removeAnalyzerById(Long id) {
-        analyzerRepository.deleteById(id);
+        analyzerRepository.deleteAnalyzerById(id);
+    }
+
+    @Override
+    public void delete(Analyzer analyzer) {
+        analyzerRepository.delete(analyzer);
     }
 }

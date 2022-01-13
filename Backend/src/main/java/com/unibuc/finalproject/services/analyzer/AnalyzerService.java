@@ -13,4 +13,5 @@ public interface AnalyzerService {
     Analyzer save(Analyzer analyzer);
     Analyzer findById(Long id);
     void removeAnalyzerById(Long id);
+    void delete(Analyzer analyzer);
 }

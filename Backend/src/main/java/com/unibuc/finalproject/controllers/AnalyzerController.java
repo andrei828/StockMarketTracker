@@ -66,7 +66,7 @@ public class AnalyzerController {
         }
 
         userService.save(currentUser);
-        analyzerService.removeAnalyzerById(Long.parseLong(id));
+        analyzerService.delete(analyzer);
         return "redirect:/analyzer_list";
     }
 
