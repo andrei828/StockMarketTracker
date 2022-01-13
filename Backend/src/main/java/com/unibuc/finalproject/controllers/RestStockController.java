@@ -4,23 +4,30 @@ import com.unibuc.finalproject.models.stock.*;
 import com.unibuc.finalproject.services.stock.StockService;
 import com.unibuc.finalproject.services.stock.StockValueDatePairService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-@RestController
-@RequestMapping(value = "/stocks")
-public class StockController {
+import static java.util.stream.Collectors.toList;
 
-    @Autowired
+@RestController
+@Validated
+@RequestMapping(value = "/api/stocks")
+public class RestStockController {
+
     private StockService stockService;
 
+    private final StockValueDatePairService stockValueDatePairService;
+
     @Autowired
-    private StockValueDatePairService stockValueDatePairService;
+    public RestStockController(StockService stockService, StockValueDatePairService stockValueDatePairService) {
+        this.stockService = stockService;
+        this.stockValueDatePairService = stockValueDatePairService;
+    }
 
     @RequestMapping(value = "/insert_dummies", method = RequestMethod.POST)
     @ResponseBody
@@ -69,7 +76,7 @@ public class StockController {
                 stock.getName(),
                 stock.getClosingPrices().stream().map(closingPrice ->
                     new StockRestValueDatePairResponse(closingPrice.getDate(), closingPrice.getValue())
-                ).collect(Collectors.toList())
-            )).collect(Collectors.toList());
+                ).toList())
+            ).toList();
     }
 }

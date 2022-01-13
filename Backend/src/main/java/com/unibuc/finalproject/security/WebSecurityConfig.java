@@ -2,6 +2,7 @@ package com.unibuc.finalproject.security;
 
 import javax.sql.DataSource;
 
+import com.unibuc.finalproject.repositories.UserRepository;
 import com.unibuc.finalproject.services.user.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -21,9 +22,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private DataSource dataSource;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Bean
     public UserDetailsService userDetailsService() {
-        return new CustomUserDetailsService();
+        return new CustomUserDetailsService(userRepository);
     }
 
     @Bean
@@ -42,7 +46,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/stocks/*");
+        web.ignoring().antMatchers( "/api/analyzers/*", "/api/stocks/*");
     }
 
     @Override
@@ -53,7 +57,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/users").authenticated()
+                .antMatchers("/users", "/analyzer_list").authenticated()
                 .anyRequest().permitAll()
                 .and()
                 .formLogin()

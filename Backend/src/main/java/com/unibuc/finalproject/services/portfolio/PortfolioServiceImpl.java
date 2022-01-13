@@ -11,8 +11,13 @@ import javax.sound.sampled.Port;
 @Service
 public class PortfolioServiceImpl implements PortfolioService {
 
+
+    private final PortfolioRepository portfolioRepository;
+
     @Autowired
-    private PortfolioRepository portfolioRepository;
+    public PortfolioServiceImpl(PortfolioRepository portfolioRepository) {
+        this.portfolioRepository = portfolioRepository;
+    }
 
     @Override
     public Portfolio findByUser(User user) {

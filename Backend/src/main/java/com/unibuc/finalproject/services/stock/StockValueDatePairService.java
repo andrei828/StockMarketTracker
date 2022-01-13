@@ -8,8 +8,8 @@ import java.util.List;
 @Component
 public interface StockValueDatePairService {
 
-    public StockValueDatePair saveStockValueDatePair(StockValueDatePair stockValueDatePair);
-    public StockValueDatePair findByStockValueDatePairId(int id);
-    public void saveAll(List<StockValueDatePair> stockValueDatePairList);
-    public List<StockValueDatePair> findBySymbol(String symbol);
+    StockValueDatePair saveStockValueDatePair(StockValueDatePair stockValueDatePair);
+    StockValueDatePair findByStockValueDatePairId(Long id);
+    void saveAll(List<StockValueDatePair> stockValueDatePairList);
+    List<StockValueDatePair> findBySymbol(String symbol);
 }

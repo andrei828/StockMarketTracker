@@ -13,7 +13,7 @@ import org.springframework.test.annotation.Rollback;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
-@Rollback(false)
+@Rollback(true)
 public class UserRepositoryTests {
 
     @Autowired
@@ -25,15 +25,13 @@ public class UserRepositoryTests {
     @Test
     public void testCreateUser() {
         User user = new User();
-        user.setEmail("ravikumar@gmail.com");
-        user.setPassword("ravi2020");
-        user.setFirstName("Ravi");
-        user.setLastName("Kumar");
+        user.setEmail("andreiLiviutest@gmail.com");
+        user.setPassword("password");
+        user.setFirstName("Andrei");
+        user.setLastName("Liviu");
 
         User savedUser = repo.save(user);
-
         User existUser = entityManager.find(User.class, savedUser.getId());
-
         assertThat(user.getEmail()).isEqualTo(existUser.getEmail());
 
     }

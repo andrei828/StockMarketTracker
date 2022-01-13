@@ -2,6 +2,7 @@ package com.unibuc.finalproject.models.user;
 
 import com.unibuc.finalproject.models.analyzer.Analyzer;
 import com.unibuc.finalproject.models.portfolio.Portfolio;
+import com.unibuc.finalproject.models.wishlist.Wishlist;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -16,8 +17,11 @@ public class User implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.ALL})
     private Portfolio portfolio;
+
+    @OneToOne(cascade = {CascadeType.ALL})
+    private Wishlist wishlist;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<Analyzer> analyzers;
@@ -90,12 +94,20 @@ public class User implements Serializable {
         this.lastName = lastName;
     }
 
+    public Wishlist getWishlist() {
+        return wishlist;
+    }
+
+    public void setWishlist(Wishlist wishlist) {
+        this.wishlist = wishlist;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(portfolio, user.portfolio) && Objects.equals(analyzers, user.analyzers) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName);
+        return Objects.equals(id, user.id) && Objects.equals(analyzers, user.analyzers) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName);
     }
 
     @Override

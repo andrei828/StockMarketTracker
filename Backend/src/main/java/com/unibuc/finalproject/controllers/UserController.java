@@ -3,13 +3,17 @@ package com.unibuc.finalproject.controllers;
 import com.unibuc.finalproject.models.portfolio.Portfolio;
 import com.unibuc.finalproject.models.stock.Stock;
 import com.unibuc.finalproject.models.user.User;
+import com.unibuc.finalproject.models.wishlist.Wishlist;
 import com.unibuc.finalproject.repositories.UserRepository;
 import com.unibuc.finalproject.services.portfolio.PortfolioService;
 import com.unibuc.finalproject.services.stock.StockService;
+import com.unibuc.finalproject.services.user.UserService;
+import com.unibuc.finalproject.services.wishlist.WishlistService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,16 +24,24 @@ import java.util.List;
 import java.util.Set;
 
 @Controller
+@Validated
 public class UserController {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserService userService;
+
+    private final StockService stockService;
+
+    private final PortfolioService portfolioService;
+
+    private final WishlistService wishlistService;
 
     @Autowired
-    private StockService stockService;
-
-    @Autowired
-    private PortfolioService portfolioService;
+    public UserController(UserService userService, StockService stockService, PortfolioService portfolioService, WishlistService wishlistService) {
+        this.userService = userService;
+        this.stockService = stockService;
+        this.portfolioService = portfolioService;
+        this.wishlistService = wishlistService;
+    }
 
     @GetMapping("")
     public String viewHomePage() {
@@ -48,11 +60,18 @@ public class UserController {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
+
         Portfolio portfolio = new Portfolio();
         portfolio.setUser(user);
         user.setPortfolio(portfolio);
-        portfolioService.save(portfolio);
-        userRepository.save(user);
+
+        Wishlist wishlist = new Wishlist();
+        wishlist.setUser(user);
+        user.setWishlist(wishlist);
+
+        //wishlistService.save(wishlist);
+        //portfolioService.save(portfolio);
+        userService.save(user);
 
         return "register_success";
     }
@@ -60,7 +79,7 @@ public class UserController {
     @GetMapping("/add/{symbol}")
     public String addStockToPortfolio(@PathVariable("symbol") String symbol, Principal principal) {
         Stock stock = stockService.findByStockSymbol(symbol);
-        User currentUser = userRepository.findByEmail(principal.getName());
+        User currentUser = userService.findByEmail(principal.getName());
         Portfolio portfolio = currentUser.getPortfolio();
         Set<Stock> currentStocks = portfolio.getStocks();
         if (currentStocks == null) {
@@ -68,14 +87,14 @@ public class UserController {
         }
         currentStocks.add(stock);
         portfolioService.save(portfolio);
-        userRepository.save(currentUser);
+        userService.save(currentUser);
         return "redirect:/users";
     }
 
     @GetMapping("/remove/{symbol}")
-    public String showUpdateForm(@PathVariable("symbol") String symbol, Principal principal) {
+    public String removeSymbolFromPortfolio(@PathVariable("symbol") String symbol, Principal principal) {
         Stock stock = stockService.findByStockSymbol(symbol);
-        User currentUser = userRepository.findByEmail(principal.getName());
+        User currentUser = userService.findByEmail(principal.getName());
         Portfolio portfolio = currentUser.getPortfolio();
         Set<Stock> currentStocks = portfolio.getStocks();
         if (currentStocks == null) {
@@ -84,16 +103,15 @@ public class UserController {
 
         currentStocks.remove(stock);
         portfolioService.save(portfolio);
-        userRepository.save(currentUser);
+        userService.save(currentUser);
         return "redirect:/users";
     }
 
-
     @GetMapping("/users")
     public String listUsers(Model model, Principal principal) {
-        List<User> listUsers = userRepository.findAll();
+        List<User> listUsers = userService.findAll();
         List<Stock> listStocks = stockService.findAll();
-        User currentUser = userRepository.findByEmail(principal.getName());
+        User currentUser = userService.findByEmail(principal.getName());
         Portfolio portfolio = portfolioService.findByUser(currentUser);
         model.addAttribute("listUsers", listUsers);
         model.addAttribute("listStocks", listStocks);
@@ -104,7 +122,7 @@ public class UserController {
     @GetMapping("/stock/{symbol}")
     public String getStockInfo(@PathVariable("symbol") String symbol, Model model, Principal principal) {
         Stock stock = stockService.findByStockSymbol(symbol);
-        User currentUser = userRepository.findByEmail(principal.getName());
+        User currentUser = userService.findByEmail(principal.getName());
         Portfolio portfolio = portfolioService.findByUser(currentUser);
         model.addAttribute("stock", stock);
         model.addAttribute("portfolio", portfolio);

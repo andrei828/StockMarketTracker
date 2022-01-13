@@ -11,17 +11,21 @@ import java.util.Optional;
 @Service
 public class StockValueDatePairServiceImpl implements StockValueDatePairService {
 
-    @Autowired
-    StockValueDatePairRepository stockValueDatePairRepository;
+    private final StockValueDatePairRepository stockValueDatePairRepository;
 
-    @Override
-    public StockValueDatePair saveStockValueDatePair(StockValueDatePair stockValueDatePair) {
-        return null;
+    @Autowired
+    public StockValueDatePairServiceImpl(StockValueDatePairRepository stockValueDatePairRepository) {
+        this.stockValueDatePairRepository = stockValueDatePairRepository;
     }
 
     @Override
-    public StockValueDatePair findByStockValueDatePairId(int id) {
-        return null;
+    public StockValueDatePair saveStockValueDatePair(StockValueDatePair stockValueDatePair) {
+        return stockValueDatePairRepository.save(stockValueDatePair);
+    }
+
+    @Override
+    public StockValueDatePair findByStockValueDatePairId(Long id) {
+        return stockValueDatePairRepository.findStockValueDatePairById(id);
     }
 
     @Override

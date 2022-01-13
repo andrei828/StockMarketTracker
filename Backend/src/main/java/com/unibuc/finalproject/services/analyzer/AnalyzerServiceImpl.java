@@ -11,8 +11,12 @@ import java.util.List;
 @Service
 public class AnalyzerServiceImpl implements AnalyzerService {
 
+    private final AnalyzerRepository analyzerRepository;
+
     @Autowired
-    private AnalyzerRepository analyzerRepository;
+    public AnalyzerServiceImpl(AnalyzerRepository analyzerRepository) {
+        this.analyzerRepository = analyzerRepository;
+    }
 
     @Override
     public List<Analyzer> findByUser(User user) {

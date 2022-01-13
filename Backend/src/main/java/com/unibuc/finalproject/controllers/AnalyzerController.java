@@ -8,9 +8,11 @@ import com.unibuc.finalproject.repositories.UserRepository;
 import com.unibuc.finalproject.services.analyzer.AnalyzerService;
 import com.unibuc.finalproject.services.portfolio.PortfolioService;
 import com.unibuc.finalproject.services.stock.StockService;
+import com.unibuc.finalproject.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -20,23 +22,28 @@ import java.util.List;
 import java.util.Set;
 
 @Controller
+@Validated
 public class AnalyzerController {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserService userService;
+
+    private final StockService stockService;
+
+    private final PortfolioService portfolioService;
+
+    private final AnalyzerService analyzerService;
 
     @Autowired
-    private StockService stockService;
-
-    @Autowired
-    private PortfolioService portfolioService;
-
-    @Autowired
-    private AnalyzerService analyzerService;
+    public AnalyzerController(UserService userService, StockService stockService, PortfolioService portfolioService, AnalyzerService analyzerService) {
+        this.userService = userService;
+        this.stockService = stockService;
+        this.portfolioService = portfolioService;
+        this.analyzerService = analyzerService;
+    }
 
     @GetMapping("/analyzer_list")
     public String listUsers(Model model, Principal principal) {
-        User currentUser = userRepository.findByEmail(principal.getName());
+        User currentUser = userService.findByEmail(principal.getName());
         List<Analyzer> analyzers = analyzerService.findByUser(currentUser);
         model.addAttribute("listAnalyzers", analyzers);
         return "analyzer_list";
@@ -44,28 +51,21 @@ public class AnalyzerController {
 
     @GetMapping("/add_analyzer")
     public String newAnalyzer(Principal principal) {
-        User currentUser = userRepository.findByEmail(principal.getName());
-        Set<Analyzer> analyzers = currentUser.getAnalyzers();
-        Analyzer analyzer = new Analyzer();
-        analyzer.setUser(currentUser);
-        if (analyzers == null) {
-            analyzers = new HashSet<>();
-        }
-        analyzers.add(analyzer);
-        analyzerService.save(analyzer);
+        User currentUser = userService.findByEmail(principal.getName());
+        RestAnalyzerController.addNewAnalyzer(currentUser, analyzerService);
         return "redirect:/analyzer_list";
     }
 
     @GetMapping("/delete_analyzer/{id}")
     public String deleteAnalyzer(@PathVariable("id") String id, Principal principal) {
         Analyzer analyzer = analyzerService.findById(Long.parseLong(id));
-        User currentUser = userRepository.findByEmail(principal.getName());
+        User currentUser = userService.findByEmail(principal.getName());
         Set<Analyzer> analyzers = currentUser.getAnalyzers();
         if (analyzers.contains(analyzer)) {
             analyzers.remove(analyzer);
         }
-        
-        userRepository.save(currentUser);
+
+        userService.save(currentUser);
         analyzerService.removeAnalyzerById(Long.parseLong(id));
         return "redirect:/analyzer_list";
     }
